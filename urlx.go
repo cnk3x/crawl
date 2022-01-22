@@ -1,40 +1,26 @@
 package crawl
 
 import (
-	"context"
-	"time"
-
 	"github.com/cnk3x/urlx"
 )
 
-func Default(ctx context.Context) *urlx.Request {
-	return MacEdge(ctx)
-}
+type (
+	Request      = urlx.Request
+	Option       = urlx.Option
+	HeaderOption = urlx.HeaderOption
+)
 
-// NewBrowser 浏览器
-func NewBrowser(ctx context.Context) *urlx.Request {
-	ms := time.Millisecond
-	return urlx.New(ctx).HeaderWith(urlx.AcceptHTML, urlx.AcceptChinese, urlx.NoCache, AcceptAllEncodings).
-		ProcessWith(AutoCharset, Decompression).
-		TryAt(ms*300, ms*800, ms*1500)
-}
-
-// MacEdge Mac Edge 浏览器
-func MacEdge(ctx context.Context) *urlx.Request {
-	return NewBrowser(ctx).HeaderWith(urlx.MacEdgeAgent)
-}
-
-// WindowsEdge Windows Edge 浏览器
-func WindowsEdge(ctx context.Context) *urlx.Request {
-	return NewBrowser(ctx).HeaderWith(urlx.WindowsEdgeAgent)
-}
-
-// IPhoneEdge IPhone Edge 浏览器
-func IPhoneEdge(ctx context.Context) *urlx.Request {
-	return NewBrowser(ctx).HeaderWith(urlx.IPhoneAgent)
-}
-
-// AndroidEdge Android Edge 浏览器
-func AndroidEdge(ctx context.Context) *urlx.Request {
-	return NewBrowser(ctx).HeaderWith(AndroidEdgeAgent)
-}
+var (
+	New            = urlx.New
+	AcceptHTML     = urlx.AcceptHTML
+	AcceptChinese  = urlx.AcceptChinese
+	NoCache        = urlx.NoCache
+	UseClient      = urlx.UseClient
+	Accept         = urlx.Accept
+	AcceptAny      = urlx.AcceptAny
+	AcceptJSON     = urlx.AcceptJSON
+	AcceptLanguage = urlx.AcceptLanguage
+	AcceptXML      = urlx.AcceptXML
+	HeaderDel      = urlx.HeaderDel
+	HeaderSet      = urlx.HeaderSet
+)
