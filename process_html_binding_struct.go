@@ -13,13 +13,12 @@ import (
 )
 
 var (
-	ErrValueCannotAddress  = errors.New("value can not address")
-	ErrValueNotBasicKind   = errors.New("value not a basic kind")
-	ErrValueCast           = errors.New("value string cast error")
-	ErrValueKindNotSupport = errors.New("value kind not support")
+	ErrValueCannotAddress = errors.New("value can not address")
+	ErrValueNotBasicKind  = errors.New("value not a basic kind")
+	ErrValueCast          = errors.New("value string cast error")
 )
 
-type StrcutOptions struct {
+type StructOptions struct {
 	SelectTag string // select
 	AttrTag   string // attr
 	FormatTag string // format
@@ -27,14 +26,14 @@ type StrcutOptions struct {
 	ReplTag   string // repl
 }
 
-func BindStruct(sel *goquery.Selection, out any, options StrcutOptions) error {
+func BindStruct(sel *goquery.Selection, out any, options StructOptions) error {
 	if sel.Size() > 0 {
 		return bindStruct(reflect.ValueOf(out), sel, strcutTags{}, options)
 	}
 	return nil
 }
 
-func bindStruct(rv reflect.Value, sel *goquery.Selection, tags strcutTags, options StrcutOptions) error {
+func bindStruct(rv reflect.Value, sel *goquery.Selection, tags strcutTags, options StructOptions) error {
 	if rv = reflect.Indirect(rv); !rv.CanAddr() {
 		return ErrValueCannotAddress
 	}
@@ -112,6 +111,13 @@ func setStructBasicValue(fv reflect.Value, value, format string) error {
 	switch fv.Type() {
 	case durationType:
 		if d, err := time.ParseDuration(value); err != nil {
+			return fmt.Errorf("%w: %s", ErrValueCast, err.Error())
+		} else {
+			fv.SetInt(int64(d))
+		}
+		return nil
+	case durationType2:
+		if d, err := ParseDuration(value); err != nil {
 			return fmt.Errorf("%w: %s", ErrValueCast, err.Error())
 		} else {
 			fv.SetInt(int64(d))
@@ -205,7 +211,7 @@ func getStructSelectionText(sel *goquery.Selection, attr, find, repl string) (s 
 	return s
 }
 
-func parseStructOptions(fs reflect.StructField, options StrcutOptions) (tags strcutTags) {
+func parseStructOptions(fs reflect.StructField, options StructOptions) (tags strcutTags) {
 	if options.SelectTag == "" {
 		options.SelectTag = "select"
 	}
@@ -233,9 +239,10 @@ func parseStructOptions(fs reflect.StructField, options StrcutOptions) (tags str
 }
 
 var (
-	timeType     = reflect.TypeOf(time.Time{})
-	durationType = reflect.TypeOf(time.Duration(0))
-	bytesType    = reflect.TypeOf([]byte{})
+	timeType      = reflect.TypeOf(time.Time{})
+	durationType  = reflect.TypeOf(time.Duration(0))
+	durationType2 = reflect.TypeOf(Duration(0))
+	bytesType     = reflect.TypeOf([]byte{})
 )
 
 type strcutTags struct {

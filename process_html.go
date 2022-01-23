@@ -5,8 +5,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cnk3x/urlx"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/cnk3x/urlx"
 )
 
 // ProcessHtml Html选择器
@@ -25,16 +25,16 @@ func ProcessHtml(readHtml func(doc *goquery.Selection) error) urlx.Process {
 }
 
 // ProcessStruct Html解析到Struct
-func ProcessStruct(rootSelect string, options StrcutOptions, out any) urlx.Process {
+func ProcessStruct(rootSelect string, out any, options StructOptions) urlx.Process {
 	return ProcessHtml(func(doc *goquery.Selection) error {
 		return BindStruct(doc.Find(rootSelect), out, options)
 	})
 }
 
 // ProcessMap Html解析到Map, out must map[string]any or []map[string]any
-func ProcessMap(rootSelect string, options MapOptions, out any) urlx.Process {
+func ProcessMap(out any, params map[string]string, options MapField) urlx.Process {
 	return ProcessHtml(func(doc *goquery.Selection) error {
-		data, err := BindMapField(doc, options.MapField)
+		data, err := BindMapField(doc, params, options)
 		if err != nil {
 			return err
 		}
@@ -44,6 +44,9 @@ func ProcessMap(rootSelect string, options MapOptions, out any) urlx.Process {
 
 		var ok bool
 		switch t := out.(type) {
+		case *any:
+			*t = data
+			ok = true
 		case *map[string]any:
 			*t, ok = data[0].(map[string]any)
 		case *[]map[string]any:
