@@ -28,12 +28,12 @@ type StructOptions struct {
 
 func BindStruct(sel *goquery.Selection, out any, options StructOptions) error {
 	if sel.Size() > 0 {
-		return bindStruct(reflect.ValueOf(out), sel, strcutTags{}, options)
+		return bindStruct(reflect.ValueOf(out), sel, structTags{}, options)
 	}
 	return nil
 }
 
-func bindStruct(rv reflect.Value, sel *goquery.Selection, tags strcutTags, options StructOptions) error {
+func bindStruct(rv reflect.Value, sel *goquery.Selection, tags structTags, options StructOptions) error {
 	if rv = reflect.Indirect(rv); !rv.CanAddr() {
 		return ErrValueCannotAddress
 	}
@@ -91,7 +91,7 @@ func bindStruct(rv reflect.Value, sel *goquery.Selection, tags strcutTags, optio
 	return nil
 }
 
-func setStructSelectText(fv reflect.Value, sel *goquery.Selection, tags strcutTags) error {
+func setStructSelectText(fv reflect.Value, sel *goquery.Selection, tags structTags) error {
 	s := getStructSelectionText(sel, tags.Attr, tags.Find, tags.Repl)
 	if s != "" {
 		return setStructBasicValue(fv, s, tags.Format)
@@ -211,7 +211,7 @@ func getStructSelectionText(sel *goquery.Selection, attr, find, repl string) (s 
 	return s
 }
 
-func parseStructOptions(fs reflect.StructField, options StructOptions) (tags strcutTags) {
+func parseStructOptions(fs reflect.StructField, options StructOptions) (tags structTags) {
 	if options.SelectTag == "" {
 		options.SelectTag = "select"
 	}
@@ -245,7 +245,7 @@ var (
 	bytesType     = reflect.TypeOf([]byte{})
 )
 
-type strcutTags struct {
+type structTags struct {
 	Select string
 	Attr   string
 	Format string

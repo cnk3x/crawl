@@ -1,9 +1,10 @@
 package crawl
 
 import (
-	"github.com/goccy/go-yaml"
 	"testing"
 	"time"
+
+	"github.com/goccy/go-yaml"
 )
 
 func TestDuration(t *testing.T) {

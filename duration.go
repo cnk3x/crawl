@@ -2,9 +2,10 @@ package crawl
 
 import (
 	"bytes"
-	"database/sql/driver"
 	"errors"
 	"time"
+
+	"database/sql/driver"
 )
 
 const Day = time.Hour * 24
